@@ -4,10 +4,12 @@ import {
   CardActions,
   CardContent,
   CardMedia,
+  Link,
   Typography,
 } from "@mui/material";
 import { FC } from "react";
 import { Product } from "../../app/models/product";
+import { NavLink } from "react-router-dom";
 
 interface ProductCartProps {
   product: Product;
@@ -43,7 +45,13 @@ const ProductCart: FC<ProductCartProps> = ({ product }) => {
         </CardContent>
         <CardActions>
           <Button size="small">Share</Button>
-          <Button size="small">Learn More</Button>
+          <Button
+            component={NavLink}
+            to={`/catalog/${product.id}`}
+            size="small"
+          >
+            Learn More
+          </Button>
         </CardActions>
       </Card>
     </>
