@@ -6,15 +6,29 @@ import {
   CardMedia,
   Typography,
 } from "@mui/material";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { Product } from "../../app/models/product";
 import { NavLink } from "react-router-dom";
+import agent from "../../app/api/agent";
+import { LoadingButton } from "@mui/lab";
+import { useStoreContext } from "../../app/context/StoreContext";
+import { currencyFormat } from "../../app/utils/util";
 
 interface ProductCartProps {
   product: Product;
 }
 
 const ProductCart: FC<ProductCartProps> = ({ product }) => {
+  const [loading, setLoading] = useState(false);
+  const { setBasket } = useStoreContext();
+
+  function handleAddItem(productId: number) {
+    setLoading(true);
+    agent.Basket.addItem(productId)
+      .then((basket) => setBasket(basket))
+      .catch((error) => console.log(error))
+      .finally(() => setLoading(false));
+  }
   return (
     <>
       <Card
@@ -39,17 +53,23 @@ const ProductCart: FC<ProductCartProps> = ({ product }) => {
             {product.name}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {product.brand} - {product.price}
+            {product.brand} - {currencyFormat(product.price)}
           </Typography>
         </CardContent>
         <CardActions>
-          <Button size="small">Share</Button>
+          <LoadingButton
+            size="small"
+            loading={loading}
+            onClick={() => handleAddItem(product.id)}
+          >
+            Add To Cart
+          </LoadingButton>
           <Button
             component={NavLink}
             to={`/catalog/${product.id}`}
             size="small"
           >
-            Learn More
+            View
           </Button>
         </CardActions>
       </Card>
